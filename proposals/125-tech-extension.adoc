@@ -1,0 +1,13 @@
+# Tech Extension
+
+## Summary
+
+* Issue: https://github.com/syndesisio/syndesis-project/issues/125
+* Sprint: 19 
+* Affected Repos:
+  - syndesis-rest
+  - syndesis-ui
+  - syndesis-verifier
+  - syndesis-camel (!)
+
+## Objective
