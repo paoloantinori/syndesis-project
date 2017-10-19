@@ -31,7 +31,7 @@
       {
         "id": "${extensionPointId}",
         "name": "Extension Point Name",
-        "kind" : "route"
+        "kind" : "route",
         "description": "Extension Poin Description",
         "tags": [],
         "definition": {
