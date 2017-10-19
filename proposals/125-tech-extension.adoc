@@ -9,6 +9,73 @@
 ** syndesis-rest
 ** syndesis-ui
 ** syndesis-verifier
-** syndesis-camel (!)
+** syndesis-integration-runtime
 
-## Objective
+## Definitions
+
+* Meta data:
++
+[source,json]
+----
+{
+  "kind": "extension",
+  "data": {
+    "id": "${groupId}:${artifactId}",    
+    "version": "${version}",
+    "name": "Extension Name",
+    "description": "Extension Description",
+    "icon": "fa-puzzle-piece",
+    "tags": [],
+    "properties": [],
+    "routes": [
+      {
+        "id": "${extensionPointId}",
+        "name": "Step Name",
+        "description": "Step Description",
+        "tags": [],
+        "definition": {
+          "inputDataShape": {
+           "kind" : "any"
+         },
+         "outputDataShape": {
+           "kind" : "any"
+         },
+         "propertyDefinitionSteps": []
+       }
+     }
+   ],
+   "otherExtensionType": []
+  },
+  "dependencies": [
+      "mvn:g/a/v",
+      "..."
+  ]
+}
+----
+
+* Integration:
++
+[source,json]
+----
+"steps": [
+  {
+    "stepKind": "extension",
+    "action": null,
+    "connection": null,
+    "extension": {
+        ...,
+        "route": {
+            ...
+        },
+    },
+    "configuredProperties": {
+      ...
+    },
+    "name": null,
+    "id": null
+  }
+]
+----
+
+NOTE: extension and extensionPoint property values can be conflated in the step's configuredProperties, it is then a job of the back-end to properly handle them
+
