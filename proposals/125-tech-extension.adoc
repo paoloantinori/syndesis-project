@@ -27,11 +27,12 @@
     "icon": "fa-puzzle-piece",
     "tags": [],
     "properties": [],
-    "routes": [
+    "extensionPoints": [
       {
         "id": "${extensionPointId}",
-        "name": "Step Name",
-        "description": "Step Description",
+        "name": "Extension Point Name",
+        "kind" : "route"
+        "description": "Extension Poin Description",
         "tags": [],
         "definition": {
           "inputDataShape": {
@@ -43,8 +44,7 @@
          "propertyDefinitionSteps": []
        }
      }
-   ],
-   "otherExtensionType": []
+   ]
   },
   "dependencies": [
       "mvn:g/a/v",
@@ -64,7 +64,7 @@
     "connection": null,
     "extension": {
         ...,
-        "route": {
+        "extensionPoint": {
             ...
         },
     },
