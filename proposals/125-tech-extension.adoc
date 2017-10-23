@@ -184,12 +184,12 @@ References:
 
 * PR: https://github.com/syndesisio/syndesis-rest/pull/743
 
-== Updates to the current architecture
+== Model
 
-1. To share the concept of Actions between connectors and extension, a change of the model is required as Actions are nowadays tightly linked to a camel connector so they have a number of connector related properties that do not fit the extension definition. 
-+
+To share the concept of Actions between connectors and extension, a change of the model is required as Actions are nowadays tightly linked to a camel connector so they have a number of connector related properties that do not fit the extension definition. 
+
 The proposed `Action` definition is:
-+
+
 [source,java]
 ----
 public interface Descriptor {
