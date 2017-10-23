@@ -26,13 +26,12 @@
     "description": "Extension Description",
     "icon": "fa-puzzle-piece",
     "tags": [],
-    "properties": [],
-    "extensionPoints": [
+    "action": [
       {
-        "id": "${extensionPointId}",
-        "name": "Extension Point Name",
-        "kind" : "route",
-        "description": "Extension Poin Description",
+        "id": "${actionId}",
+        "name": "Action Name",
+        "actionType" : "extension",
+        "description": "Action Description",
         "tags": [],
         "definition": {
           "inputDataShape": {
@@ -40,6 +39,9 @@
          },
          "outputDataShape": {
            "kind" : "any"
+         },
+         "descriptor": {
+             "target" : "route"
          },
          "propertyDefinitionSteps": []
        }
@@ -64,7 +66,7 @@
     "connection": null,
     "extension": {
         ...,
-        "extensionPoint": {
+        "action": {
             ...
         },
     },
@@ -77,5 +79,4 @@
 ]
 ----
 
-NOTE: extension and extensionPoint property values can be conflated in the step's configuredProperties, it is then a job of the back-end to properly handle them
 
