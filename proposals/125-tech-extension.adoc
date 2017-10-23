@@ -95,6 +95,11 @@ And should contains:
 }
 ----
 
+[NOTE]
+====
+Extensions do not have global options.
+====
+
 == Storage
 
 The extension are persisted on Syndesis backend using a `filestore` that should support file-system like paths and operation and should have a pluggable storage backend.
