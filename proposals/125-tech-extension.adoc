@@ -183,3 +183,87 @@ The default `FileStore` implementation stores the extension (jar) in a DB table 
 References:
 
 * PR: https://github.com/syndesisio/syndesis-rest/pull/743
+
+== Updates to the current architecture
+
+1. To share the concept of Actions between connectors and extension, a change of the model is required as Actions are nowadays tightly linked to a camel connector so they have a number of connector related properties that do not fit the extension definition. 
++
+The proposed `Action` definition is:
++
+[source,java]
+----
+public interface Descriptor {
+}
+
+@JsonTypeInfo(
+    use      = JsonTypeInfo.Id.NAME,
+    include  = JsonTypeInfo.As.PROPERTY,
+    property = "actionType"
+)
+@JsonSubTypes({
+    @JsonSubTypes.Type(
+        value = ImmutableConnectorAction.class, 
+        name  = Action.TYPE_CONNECTOR),
+    @JsonSubTypes.Type(
+        value = ImmutableExtensionAction.class, 
+        name  = Action.TYPE_EXTENSION) 
+})
+public interface Action<D extends Descriptor> {
+    String TYPE_CONNECTOR = "connector";
+    String TYPE_EXTENSION = "extension";
+
+    /**
+     * Only used as marker purpose
+     */
+    String getActionType();
+
+    /**
+     * The descriptor
+     */
+    D getDescriptor();
+}
+
+@Value.Immutable
+@JsonIgnoreProperties({ "actionType" })
+@JsonDeserialize(builder = ConnectorAction.Builder.class)
+public interface ConnectorAction extends Action<ConnectorDescriptor> {
+    @Override
+    default String getActionType() {
+        return Action.TYPE_CONNECTOR;
+    }
+
+    class Builder extends ImmutableConnectorAction.Builder {
+    }
+}
+
+@Value.Immutable
+@JsonIgnoreProperties({ "actionType" })
+@JsonDeserialize(builder = ExtensionAction.Builder.class)
+public interface ExtensionAction extends Action<ExtensionDescriptor> {
+    @Override
+    default String getActionType() {
+        return Action.TYPE_EXTENSION;
+    }
+
+    class Builder extends ImmutableExtensionAction.Builder {
+    }
+}
+
+@Value.Immutable
+@JsonDeserialize(builder = Step.Builder.class)
+public interface Step {
+    Action<?> getAction();
+
+    class Builder extends ImmutableStep.Builder {
+    }
+}
+
+public static class ConnectorDescriptor implements Descriptor {
+    ...
+}
+
+public static class ExtensionDescriptor implements Descriptor {
+   ...
+}
+----
+
