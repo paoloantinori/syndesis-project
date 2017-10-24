@@ -1,7 +1,7 @@
-# Tech Extension
+= Tech Extension
 :toc:
 
-## Summary
+== Summary
 
 * Issues:
 ** https://github.com/syndesisio/syndesis-project/issues/125
@@ -12,11 +12,11 @@
 ** syndesis-verifier
 ** syndesis-integration-runtime
 
-## Objective
+== Objective
 
 An expert user should be able to contribute additional steps using a binary archive that should be deployed to Syndesis via the UI.
 
-## Archive format
+== Archive format
 
 The archive should be packages using `spring-boot-maven-plugin` using `MODULE` layout that bundles dependencies excluding those with `provided` scope and project resources (does not bundle bootstrap loader).
 
@@ -43,8 +43,6 @@ The archive should be packages using `spring-boot-maven-plugin` using `MODULE` l
 ====
 Artifacts already provided by the integration should have *provided* as scope.
 ====
-
-### Metadata
 
 The archive is bundled with an `Extension Metada` that should be placed in
 
@@ -99,6 +97,9 @@ And should contains:
 ====
 Extensions do not have global options.
 ====
+
+== Deployment model
+
 
 == Storage
 
@@ -176,20 +177,36 @@ public interface FileStore {
 }
 ----
 
-=== Default Implementation
-
 The default `FileStore` implementation stores the extension (jar) in a DB table named "filestore" inside the `syndesis` database (PostgreSQL).
 
 References:
 
 * PR: https://github.com/syndesisio/syndesis-rest/pull/743
 
-== Model
+== API
 
-To share the concept of Actions between connectors and extension, a change of the model is required as Actions are nowadays tightly linked to a camel connector so they have a number of connector related properties that do not fit the extension definition. 
+We need to use a dedicated beta API version, like v1beta (not yet defined as it depend on API refactoring)
 
+[cols="1,3,4a", options="header"]
+|===
+|Verb
+|Path
+|Description
+
+|x
+|/api/{version}/extensions/{extensionId}/actions/{actionId}
+|
+|===
+
+
+== Impacts
+
+* *Model*
++
+To share the concept of Actions between connectors and extension, a change of the model is required as Actions are nowadays tightly linked to a camel connector so they have a number of connector related properties that do not fit the extension definition.
++
 The proposed `Action` definition is:
-
++
 [source,java]
 ----
 public interface Descriptor {
@@ -202,11 +219,11 @@ public interface Descriptor {
 )
 @JsonSubTypes({
     @JsonSubTypes.Type(
-        value = ImmutableConnectorAction.class, 
+        value = ImmutableConnectorAction.class,
         name  = Action.TYPE_CONNECTOR),
     @JsonSubTypes.Type(
-        value = ImmutableExtensionAction.class, 
-        name  = Action.TYPE_EXTENSION) 
+        value = ImmutableExtensionAction.class,
+        name  = Action.TYPE_EXTENSION)
 })
 public interface Action<D extends Descriptor> {
     String TYPE_CONNECTOR = "connector";
@@ -266,4 +283,3 @@ public static class ExtensionDescriptor implements Descriptor {
    ...
 }
 ----
-
