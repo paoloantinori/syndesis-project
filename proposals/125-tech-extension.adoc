@@ -251,11 +251,11 @@ We need to use a dedicated beta API version, like v1beta (not yet defined as it 
 
 |GET
 |/api/{version}/extensions/{extensionId}
-|To get a tech extensions
+|To get a tech extension
 
 |DELETE
 |/api/{version}/extensions/{extensionId}
-|To delete a tech extensions
+|To delete a tech extension
 
 |GET
 |/api/{version}/extensions/{extensionId}/actions
