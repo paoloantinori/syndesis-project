@@ -47,7 +47,7 @@ Extensions should appears a standard step on Syndesis with he possibility to set
 
 == Archive format
 
-The archive should be packages using `spring-boot-maven-plugin` using `MODULE` layout that bundles dependencies excluding those with `provided` scope and project resources (does not bundle bootstrap loader).
+The archive should be packaged using `spring-boot-maven-plugin` using `MODULE` layout that bundles dependencies excluding those with `provided` scope and project resources (does not bundle bootstrap loader).
 
 [source,xml]
 .Example Usage
@@ -74,7 +74,7 @@ The archive should be packages using `spring-boot-maven-plugin` using `MODULE` l
 * A custom layout has to be implemented a MODULE is now deprecated an removed from Spring Boot 2.0
 ====
 
-The archive is bundled with an `Extension Metada` that should be placed in
+The archive is bundled with an `Extension Metadata` that should be placed in
 
 [source]
 ----
@@ -180,7 +180,7 @@ public interface FileStore {
     /**
      * Write a file on a temporary path.
      *
-     * The path wil be decided by the file store and returned to the client.
+     * The path will be decided by the file store and returned to the client.
      *
      * @param file the content of the file
      * @return the path created for the file
