@@ -140,6 +140,12 @@ lib/oracle-jdbc.jar
 lib/...
 ----
 
+[NOTE]
+====
+A research example can be found on https://github.com/lburgazzoli/spring-boot-extension-example
+====
+
+
 == Deployment model
 
 
