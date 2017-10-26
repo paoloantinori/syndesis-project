@@ -241,9 +241,29 @@ We need to use a dedicated beta API version, like v1beta (not yet defined as it 
 |Path
 |Description
 
-|x
+|POST
+|/api/{version}/extensions
+|To create a tech extension by pushing a binary artifact
+
+|GET
+|/api/{version}/extensions
+|To list tech extensions
+
+|GET
+|/api/{version}/extensions/{extensionId}
+|To get a tech extensions
+
+|DELETE
+|/api/{version}/extensions/{extensionId}
+|To delete a tech extensions
+
+|GET
+|/api/{version}/extensions/{extensionId}/actions
+|To get actions of a tech extension
+
+|GET
 |/api/{version}/extensions/{extensionId}/actions/{actionId}
-|
+|To get a speicific action of a tech extension
 |===
 
 
