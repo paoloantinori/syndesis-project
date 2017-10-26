@@ -5,6 +5,8 @@
 
 * Issues:
 ** https://github.com/syndesisio/syndesis-project/issues/125
+** https://github.com/syndesisio/syndesis-project/issues/152
+** https://github.com/syndesisio/syndesis-project/issues/151
 * Sprint: 19
 * Affected Repos:
 ** syndesis-rest
@@ -14,7 +16,34 @@
 
 == Objective
 
-An expert user should be able to contribute additional steps using a binary archive that should be deployed to Syndesis via the UI.
+As a citizen integrator should be able to leverage custom steps created by his team in form of technical extension packaged as jar files so he need to be able to import them into the Syndesis environment.
+
+The import process should:
+
+* validate the extension
+* let the citizen integrator review extension details (name, description, steps included)
+
+As there may be more extension, the citizen integrator should be able to list and get details about any extension available on the platform.
+
+A developer working on technical extension should be able to provide steps using:
+
+* routes (Spring XML, XML Fragment, Java)
+* beans
+* custom step handlers
+
+A developer should also be able to customize the behavior of the Camel context.
+
+[WARNING]
+====
+Only one camel context per integration is supported
+====
+
+RH Dev Studio should have a dedicated support for extension such as:
+
+* Dedicated project wizard
+* Dedicated tools to upload extension
+
+Extensions should appears a standard step on Syndesis with he possibility to set parameters if needed.
 
 == Archive format
 
@@ -41,7 +70,8 @@ The archive should be packages using `spring-boot-maven-plugin` using `MODULE` l
 
 [WARNING]
 ====
-Artifacts already provided by the integration should have *provided* as scope.
+* Artifacts already provided by the integration should have *provided* as scope.
+* A custom layout has to be implemented a MODULE is now deprecated an removed from Spring Boot 2.0
 ====
 
 The archive is bundled with an `Extension Metada` that should be placed in
@@ -79,7 +109,8 @@ And should contains:
            "kind" : "any"
          },
          "descriptor": {
-             "target" : "route"
+             "kind": "endpoint|bean|step",
+             "target" : "direct:${groupId}/${artifactId}/${actionId}"
          },
          "propertyDefinitionSteps": []
        }
@@ -95,8 +126,19 @@ And should contains:
 
 [NOTE]
 ====
-Extensions do not have global options.
+Extensions do not have global options (yet)
 ====
+
+The archive layout should then looks like:
+
+[source]
+----
+META-INF/syndesys/extension.json
+com/example/MyExtension.class
+...
+lib/oracle-jdbc.jar
+lib/...
+----
 
 == Deployment model
 
@@ -283,3 +325,46 @@ public static class ExtensionDescriptor implements Descriptor {
    ...
 }
 ----
+
+* *Syndesis Integration Runtime*
++
+Extension's Action with kind *endpoint* should be translated to native steps: SetHeaders + Endpoint.
++
+Extension's Action with kind *bean* should be translated to native steps: Function (which need to be enhanced to accept properties)
++
+Extension's Action with kind *step* require a new step and step handler definition:
++
+[source,java]
+.Extension
+----
+@FunctionalInterface
+public interface SyndesisStepExtension {
+    /**
+     * Customize the definition.
+     *
+     * @param context the camel context.
+     * @param definition the current {@link ProcessorDefinition}.
+     * @param parameter the extension parameters.
+     *
+     * @return the latest definition.
+     */
+    ProcessorDefinition configure(
+        CamelContext context,
+        ProcessorDefinition definition,
+        Map<String, Object> parameters);
+}
+----
++
+[source,yaml]
+.Extension YAML
+----
+- kind: "extension"
+  name: "com.example.MyExtension"
+  properties:
+    message: "hello"
+----
++
+[NOTE]
+====
+The extension step handler should bind properties to the object if possible, remaining parameters a passed to the configure method as _parameters_
+====
