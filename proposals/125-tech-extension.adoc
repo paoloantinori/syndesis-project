@@ -266,6 +266,18 @@ We need to use a dedicated beta API version, like v1beta (not yet defined as it 
 |GET
 |/api/{version}/extensions/{extensionId}/actions/{actionId}
 |To get a speicific action of a tech extension
+
+|POST
+|/api/{version}/extensions/{extensionId}/verifier
+|Executes a validation of a uploaded extension and returns the validation result
+
+|POST
+|/api/{version}/extensions/verifier
+|Accepts a Extension metadata object and validates it, returning the the validation result. It can be used to validate extension metadata without uploading the binary file
+
+|POST
+|/api/{version}/extensions/{extensionId}/activate
+|Activates the extension if there are no validation errors (validation is performed before installing it)
 |===
 
 
