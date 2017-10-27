@@ -92,7 +92,7 @@ An example of complete extension metadata is provided below (it contains propert
     "extensionId": "${groupId}:${artifactId}",
     "version": "${version}",
     "name": "Extension Name",
-    "status": "draft|installed"
+    "status": "draft|installed (must not be hardcoded in packaged extensions)"
     "description": "Extension Description",
     "icon": "fa-puzzle-piece",
     "tags": [],
