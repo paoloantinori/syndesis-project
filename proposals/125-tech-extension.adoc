@@ -81,16 +81,18 @@ The archive is bundled with an `Extension Metadata` that should be placed in
 META-INF/syndesis/extension.json
 ----
 
-And should contains:
+An example of complete extension metadata is provided below (it contains properties that will be filled in server-side):
 
 [source,json]
 ----
 {
   "kind": "extension",
+  "id": "assigned-by-syndesis-server (must not be hardcoded in packaged extensions)"
   "data": {
-    "id": "${groupId}:${artifactId}",
+    "extensionId": "${groupId}:${artifactId}",
     "version": "${version}",
     "name": "Extension Name",
+    "status": "draft|installed (must not be hardcoded in packaged extensions)"
     "description": "Extension Description",
     "icon": "fa-puzzle-piece",
     "tags": [],
