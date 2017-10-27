@@ -394,3 +394,103 @@ public interface SyndesisStepExtension {
 ====
 The extension step handler should bind properties to the object if possible, remaining parameters a passed to the configure method as _parameters_
 ====
+
+
+== Misc
+
+A java developer should leverage annotation to implement extensions.
+
+[source,java]
+----
+Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD})
+public @interface SyndesisExtensionAction {
+    /**
+     * Alias for {@link #id()} ;
+     */
+    String value();
+
+    /**
+     * The extension id;
+     */
+    String id();
+
+    /**
+     * The extension name.
+     */
+    String name() default "";
+
+    /**
+     * The extension description.
+     */
+    String description() default "";
+
+    /**
+     * The extension tags;
+     */
+    String[] tags() default {};
+
+    /**
+     * The extension tags;
+     */
+    String inputDataShape() default "any";
+
+    /**
+     * The extension tags;
+     */
+    String outputDataShape() default "any";
+
+    /**
+     * The target;
+     */
+    String target() default "";
+}
+----
+
+There should be support for tooling like:
+
+- if SyndesisExtensionAction is used for a class extending SyndesisStepExtension, the action should have a descriptor like:
++
+[source,json]
+----
+"descriptor": {
+    "kind": "step",
+    "target" : "full.qualified.class.name"
+}
+----
+
+- if SyndesisExtensionAction is used for a class *not* extending SyndesisStepExtension, the action should have a descriptor like:
++
+[source,json]
+----
+"descriptor": {
+    "kind": "bean",
+    "target" : "full.qualified.class.name"
+}
+----
+
+- if SyndesisExtensionAction is used to define beans spring beans (@Bean) and with RouteDefinition or RouteBuilder as return type, the action should have a descriptor like:
++
+[source,json]
+----
+"descriptor": {
+    "kind": "endpoint",
+    "target" : "SyndesisExtensionAction::target()"
+}
+----
+
+
+== Maven
+
+
+We should create a maven plugin that leverages spring-boot-maven-plugin mojos with the following functionalities:
+
+* package an integration leveraging repackage with layout ZIP
+* package an extension leverage repackage with:
+** a custom layout that put dependencies in a nested lib directory
+** filter dependencies already provided by syndesis
+* generate/update the extension metadata
+** add dependencies
+** optionally auto create action scanning for specific annotations (to be documented)
+
+The plugin should be named syndesis-maven-plugin and the existing one should be renamed to syndesis-build-helper-maven-plugin.
