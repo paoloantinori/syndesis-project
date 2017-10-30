@@ -87,12 +87,12 @@ An example of complete extension metadata is provided below (it contains propert
 ----
 {
   "kind": "extension",
-  "id": "assigned-by-syndesis-server (must not be hardcoded in packaged extensions)"
+  "id": "assigned-by-syndesis-server (must not be hardcoded in packaged extensions)",
   "data": {
     "extensionId": "${groupId}:${artifactId}",
     "version": "${version}",
     "name": "Extension Name",
-    "status": "draft|installed (must not be hardcoded in packaged extensions)"
+    "status": "draft|installed (must not be hardcoded in packaged extensions)",
     "description": "Extension Description",
     "icon": "fa-puzzle-piece",
     "tags": [],
