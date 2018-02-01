@@ -49,10 +49,16 @@ docker run -p 5000:5000 -d --restart=always \
 eval $(minishift docker-env)
 cd runtime
 # build code and produce corresponding docker images
-mvn fabric8:build -Dfabric8.mode=kubernetes
+mvn clean install fabric8:build -Dfabric8.mode=kubernetes
 
 # now redploy the rest pod (either from cli or from web)
 oc rollout latest dc/syndesis-rest
+```
+
+##### increase logs
+```
+# modify root logger 
+oc env dc/syndesis-rest LOGGING_LEVEL_=debug
 ```
 
 ##### Collection of helper scripts to automaticlaly build locally and deploy to minishift
@@ -190,3 +196,42 @@ syndesis-ui/scripts/syndesis-install --clean --form .
 - from https://github.com/fabric8io-images/s2i/tree/master/java/images/jboss
 > This image also supports detecting jars with Spring Boot devtools included, which allows automatic restarts when files on the classpath are updated. Files can be easily updated in OpenShift using command oc rsync.
 - Follow the instruction in `README.MD`. 
+
+## Invoke REST APIs from `curl`
+Current configuration doesn't allow that, but the template can be easily modified, at Syndesis deploy time, to enable it:
+ 
+```bash
+# get a valid oauth token if you haven't done yet
+oc login -u developer
+# invoke rest api from the command line
+curl -k -H "Authorization: Bearer $(oc whoami -t)" https://$(oc get route syndesis  --template={{.spec.host}})/api/v1/version
+1.2-SNAPSHOT
+```
+
+
+## Delete `syndesis-db` content
+If you need to force `syndesis-db` to delete it's content and having it recreated upon a `syndesis-rest` pod restart, you can invoke this one liner:
+```bash
+oc exec -it  $(oc get pods --selector=deploymentconfig=syndesis-db  -o jsonpath="{..metadata.name}") -- bash -c 'psql -d syndesis -c "DELETE FROM jsondb;"'
+```
+
+## Remove health and readiness probes
+During development, readiness and health probes might get into your way, if you are using a debugger. For example, if you block the execution of a jvm process with a break point, the process might fail to respond to health check pings; if this happens, OpenShift will consider the pod as being unhealthy and it will kill it and deploy a new one.  
+You can patch the `DeploymentConfig` definitions to disable these checks.
+
+```bash
+# disable health and readiness probes
+for DC in syndesis-atlasmap syndesis-rest syndesis-ui
+do
+oc patch dc $DC  --type json   -p='[{"op": "remove", "path": "/spec/template/spec/containers/0/livenessProbe"}]'
+oc patch dc $DC  --type json   -p='[{"op": "remove", "path": "/spec/template/spec/containers/0/readinessProbe"}]'
+done
+
+# or pick the ones that you need here
+# oc patch dc syndesis-atlasmap --type json -p=[{"op": "remove", "path": "/spec/template/spec/containers/0/livenessProbe"}]
+# oc patch dc syndesis-atlasmap --type json -p=[{"op": "remove", "path": "/spec/template/spec/containers/0/readinessProbe"}]
+# oc patch dc syndesis-rest --type json -p=[{"op": "remove", "path": "/spec/template/spec/containers/0/livenessProbe"}]
+# oc patch dc syndesis-rest --type json -p=[{"op": "remove", "path": "/spec/template/spec/containers/0/readinessProbe"}]
+# oc patch dc syndesis-ui --type json -p=[{"op": "remove", "path": "/spec/template/spec/containers/0/livenessProbe"}]
+# oc patch dc syndesis-ui --type json -p=[{"op": "remove", "path": "/spec/template/spec/containers/0/readinessProbe"}]
+```
